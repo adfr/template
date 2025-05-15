@@ -1,0 +1,54 @@
+---
+# Configuration file for CML jobs
+# Contains all job definitions and their parameters
+
+jobs:
+  create_env:
+    name: Create Python Environment
+    script: create_environment.py
+    kernel: python3
+    cpu: 1
+    memory: 2
+    timeout: 1800  # 30 minutes
+    environment: {}
+    arguments: ""
+
+  data_processing:
+    name: Process Data
+    script: process_data.py
+    kernel: python3
+    cpu: 2
+    memory: 4
+    timeout: 3600  # 1 hour
+    environment:
+      DATA_PATH: /data/raw
+      OUTPUT_PATH: /data/processed
+    arguments: --debug
+    parent_job_id: create_env  # This makes the job dependent on create_env
+
+  model_training:
+    name: Train Model
+    script: train_model.py
+    kernel: python3
+    cpu: 4
+    memory: 8
+    nvidia_gpu: 1
+    timeout: 7200  # 2 hours
+    environment:
+      MODEL_OUTPUT: /models/latest
+    arguments: --epochs 50 --batch-size 32
+    parent_job_id: data_processing
+
+  scheduled_report:
+    name: Generate Weekly Report
+    script: generate_report.py
+    kernel: python3
+    cpu: 1
+    memory: 2
+    timeout: 1200  # 20 minutes
+    schedule: 0 8 * * 1  # Every Monday at 8 AM
+    environment:
+      REPORT_PATH: /reports
+    arguments: --type full
+    attachments:
+      - reports/weekly_summary.pdf 
