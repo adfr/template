@@ -20,22 +20,7 @@ This template provides a framework for setting up and managing jobs in Cloudera 
 
 ## Usage
 
-You can use the script in two ways:
-
-### Command Line Arguments
-
-```bash
-python run_jobs.py <api_host> <api_key> <project_id>
-```
-
-Where:
-- `api_host` is your CML API host URL (e.g., https://ml-12345.cloud.example.com)
-- `api_key` is your CML API key for authentication
-- `project_id` is the ID of the project to create jobs in
-
-### Environment Variables
-
-Alternatively, you can set environment variables in a `.env` file:
+Set environment variables in a `.env` file:
 
 ```
 CML_API_HOST=https://ml-12345.cloud.example.com
@@ -43,7 +28,7 @@ CML_API_KEY=your_api_key_here
 CML_PROJECT_ID=project_id_here
 ```
 
-Then run the script without arguments:
+Then run the script:
 
 ```bash
 python run_jobs.py
