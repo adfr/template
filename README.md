@@ -7,15 +7,22 @@ This template provides a framework for setting up and managing jobs in Cloudera 
 - `config/jobs_config.yaml` - Contains all job configurations and their parameters
 - `run_jobs.py` - Main script that reads job configurations and creates them in CML
 - `create_environment.py` - First job that sets up the Python environment
-- `process_data.py` - Example data processing job 
+- `process_data.py` - Example data processing job
+- `.env` - Environment variables (not in version control)
+- `.env.example` - Example environment variables template
 
 ## How It Works
 
 1. Define all your jobs in `config/jobs_config.yaml` with their parameters, dependencies, and resources
-2. The first job is always `create_env` which sets up the Python environment
-3. Run the `run_jobs.py` script to create all the jobs in CML
+2. Configure your environment variables in `.env` (copy from `.env.example`)
+3. The first job is always `create_env` which sets up the Python environment
+4. Run the `run_jobs.py` script to create all the jobs in CML
 
 ## Usage
+
+You can use the script in two ways:
+
+### Command Line Arguments
 
 ```bash
 python run_jobs.py <api_host> <api_key> <project_id>
@@ -25,6 +32,27 @@ Where:
 - `api_host` is your CML API host URL (e.g., https://ml-12345.cloud.example.com)
 - `api_key` is your CML API key for authentication
 - `project_id` is the ID of the project to create jobs in
+
+### Environment Variables
+
+Alternatively, you can set environment variables in a `.env` file:
+
+```
+CML_API_HOST=https://ml-12345.cloud.example.com
+CML_API_KEY=your_api_key_here
+CML_PROJECT_ID=project_id_here
+```
+
+Then run the script without arguments:
+
+```bash
+python run_jobs.py
+```
+
+Additional environment variables that can be set:
+- `DEFAULT_CPU` - Default CPU cores for jobs (if not specified in config)
+- `DEFAULT_MEMORY` - Default memory in GB for jobs (if not specified in config)
+- `DEFAULT_TIMEOUT` - Default timeout in seconds for jobs (if not specified in config)
 
 ## Job Configuration
 

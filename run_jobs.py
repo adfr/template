@@ -7,6 +7,10 @@ import os
 import sys
 import yaml
 import cmlapi
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def load_config():
     """
@@ -23,18 +27,35 @@ def load_config():
     
     return config['jobs']
 
-def setup_jobs(api_host, api_key, project_id):
+def setup_jobs(api_host=None, api_key=None, project_id=None):
     """
     Set up and create CML jobs based on configurations in config/jobs_config.yaml
     
     Args:
-        api_host (str): CML API host URL
-        api_key (str): CML API key for authentication
-        project_id (str): ID of the project to create jobs in
+        api_host (str, optional): CML API host URL. Defaults to CML_API_HOST env var.
+        api_key (str, optional): CML API key for authentication. Defaults to CML_API_KEY env var.
+        project_id (str, optional): ID of the project to create jobs in. Defaults to CML_PROJECT_ID env var.
     
     Returns:
         dict: Mapping of job names to their created job IDs
     """
+    # Use provided args or fall back to environment variables
+    api_host = api_host or os.environ.get("CML_API_HOST")
+    api_key = api_key or os.environ.get("CML_API_KEY")
+    project_id = project_id or os.environ.get("CML_PROJECT_ID")
+    
+    # Check if required parameters are available
+    if not all([api_host, api_key, project_id]):
+        missing = []
+        if not api_host:
+            missing.append("api_host / CML_API_HOST")
+        if not api_key:
+            missing.append("api_key / CML_API_KEY")
+        if not project_id:
+            missing.append("project_id / CML_PROJECT_ID")
+            
+        raise ValueError(f"Missing required parameters: {', '.join(missing)}")
+    
     print(f"Setting up jobs for project: {project_id}")
     
     # Load the job configuration
@@ -63,13 +84,13 @@ def setup_jobs(api_host, api_key, project_id):
         job_body.kernel = job_config.get("kernel", "python3")
         
         # Set resource requirements
-        job_body.cpu = job_config.get("cpu", 1)
-        job_body.memory = job_config.get("memory", 1)
+        job_body.cpu = job_config.get("cpu", float(os.environ.get("DEFAULT_CPU", 1)))
+        job_body.memory = job_config.get("memory", float(os.environ.get("DEFAULT_MEMORY", 1)))
         if "nvidia_gpu" in job_config:
             job_body.nvidia_gpu = job_config["nvidia_gpu"]
         
         # Set timeout
-        job_body.timeout = job_config.get("timeout", 3600)  # Default 1 hour
+        job_body.timeout = job_config.get("timeout", int(os.environ.get("DEFAULT_TIMEOUT", 3600)))
         
         # Set arguments if provided
         if "arguments" in job_config:
@@ -106,16 +127,20 @@ def setup_jobs(api_host, api_key, project_id):
     return job_id_map
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print("Usage: python run_jobs.py <api_host> <api_key> <project_id>")
+    # If command line arguments are provided, use them; otherwise, use environment variables
+    api_host = sys.argv[1] if len(sys.argv) > 1 else None
+    api_key = sys.argv[2] if len(sys.argv) > 2 else None
+    project_id = sys.argv[3] if len(sys.argv) > 3 else None
+    
+    try:
+        job_ids = setup_jobs(api_host, api_key, project_id)
+        
+        print("\nJob setup complete. Created jobs:")
+        for job_name, job_id in job_ids.items():
+            print(f"- {job_name}: {job_id}")
+            
+    except ValueError as e:
+        print(f"Error: {str(e)}")
+        print("\nUsage: python run_jobs.py [api_host] [api_key] [project_id]")
+        print("       (or set CML_API_HOST, CML_API_KEY, and CML_PROJECT_ID environment variables)")
         sys.exit(1)
-    
-    api_host = sys.argv[1]
-    api_key = sys.argv[2]
-    project_id = sys.argv[3]
-    
-    job_ids = setup_jobs(api_host, api_key, project_id)
-    
-    print("\nJob setup complete. Created jobs:")
-    for job_name, job_id in job_ids.items():
-        print(f"- {job_name}: {job_id}") 
