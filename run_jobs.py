@@ -39,6 +39,7 @@ def setup_jobs():
     api_host = os.environ.get("CML_API_HOST")
     api_key = os.environ.get("CML_API_KEY")
     project_id = os.environ.get("CML_PROJECT_ID")
+    default_runtime_id = os.environ.get("CML_RUNTIME_ID")
     
     # Check if required parameters are available
     if not all([api_host, api_key, project_id]):
@@ -78,6 +79,15 @@ def setup_jobs():
         job_body.name = job_config["name"]
         job_body.script = job_config["script"]
         job_body.kernel = job_config.get("kernel", "python3")
+        
+        # Set runtime ID - required for ML Runtime projects
+        if "runtime_id" in job_config:
+            job_body.runtime_id = job_config["runtime_id"]
+        elif default_runtime_id:
+            job_body.runtime_id = default_runtime_id
+        else:
+            print(f"Warning: No runtime_id specified for job '{job_config['name']}'.")
+            print("ML Runtime projects require a runtime_id. Set it in config or with CML_RUNTIME_ID env var.")
         
         # Set resource requirements
         job_body.cpu = job_config.get("cpu", float(os.environ.get("DEFAULT_CPU", 1)))
@@ -134,4 +144,5 @@ if __name__ == "__main__":
         print(f"Error: {str(e)}")
         print("\nPlease set the required environment variables in the .env file:")
         print("CML_API_HOST, CML_API_KEY, and CML_PROJECT_ID")
+        print("For ML Runtime projects, also set CML_RUNTIME_ID")
         sys.exit(1)

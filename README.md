@@ -26,6 +26,7 @@ Set environment variables in a `.env` file:
 CML_API_HOST=https://ml-12345.cloud.example.com
 CML_API_KEY=your_api_key_here
 CML_PROJECT_ID=project_id_here
+CML_RUNTIME_ID=your_ml_runtime_id  # Required for ML Runtime projects
 ```
 
 Then run the script:
@@ -49,6 +50,7 @@ jobs:
     name: Human-readable job name
     script: script_to_run.py
     kernel: python3  # or r, scala, etc.
+    runtime_id: runtime_id_here  # Required for ML Runtime projects 
     cpu: 1  # Number of CPU cores
     memory: 2  # Memory in GB
     timeout: 3600  # Timeout in seconds
@@ -66,6 +68,21 @@ jobs:
     attachments:
       - path/to/file.txt  # Files to attach to emails
 ```
+
+## ML Runtimes vs. Engine Runtimes
+
+CML supports two types of runtimes:
+
+1. **ML Runtimes** (newer) - Require a `runtime_id` parameter in job configurations
+2. **Engine Runtimes** (legacy) - Do not require a `runtime_id` parameter
+
+For ML Runtime projects, you must specify the `runtime_id` either in:
+1. Each job configuration in `config/jobs_config.yaml`, or
+2. The `.env` file as `CML_RUNTIME_ID` (used as a default for all jobs)
+
+The runtime ID can be:
+- A short name (e.g., `python3.11`)
+- A full image URL (e.g., `docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8`)
 
 ## Adding New Jobs
 
