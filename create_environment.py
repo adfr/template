@@ -18,11 +18,25 @@ def create_environment():
         "matplotlib",
         "cmlapi"
     ]
-    # Install packages using pip
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade"] + packages)
     
-    return True
+    # Install packages using pip
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade"] + packages)
+        print("Environment setup completed successfully.")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error installing packages: {e}")
+        return False
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return False
 
 if __name__ == "__main__":
     success = create_environment()
-    sys.exit(0 if success else 1) 
+    # Exit with appropriate code
+    if success:
+        print("Environment setup was successful.")
+        sys.exit(0)
+    else:
+        print("Environment setup failed.")
+        sys.exit(1) 
