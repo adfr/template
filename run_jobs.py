@@ -114,13 +114,13 @@ def setup_jobs():
             print("ML Runtime projects require a runtime_id. Set it in config or with CML_RUNTIME_ID env var.")
         
         # Set resource requirements
-        job_body.cpu = job_config.get("cpu", float(os.environ.get("DEFAULT_CPU", 1)))
-        job_body.memory = job_config.get("memory", float(os.environ.get("DEFAULT_MEMORY", 1)))
+        job_body.cpu = str(job_config.get("cpu", os.environ.get("DEFAULT_CPU", "1")))
+        job_body.memory = str(job_config.get("memory", os.environ.get("DEFAULT_MEMORY", "2")))
         if "nvidia_gpu" in job_config:
             job_body.nvidia_gpu = job_config["nvidia_gpu"]
         
         # Set timeout
-        job_body.timeout = job_config.get("timeout", int(os.environ.get("DEFAULT_TIMEOUT", 3600)))
+        job_body.timeout = str(job_config.get("timeout", os.environ.get("DEFAULT_TIMEOUT", "3600")))
         
         # Set arguments if provided
         if "arguments" in job_config:
