@@ -20,40 +20,12 @@ def main():
     Main function to activate environment and run hello_world.py
     """
     try:
-        # Get the directory of the current script - works in both interactive and file execution modes
-        try:
-            # When run as a script file
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-        except NameError:
-            # When run in interactive mode
-            script_dir = os.path.abspath(os.getcwd())
-            logger.info(f"Running in interactive mode. Using current directory: {script_dir}")
-        
-        # Get the project root directory (parent of script_dir)
-        project_root = os.path.dirname(script_dir)
-        
-        # Path to the hello_world.py script in the expected production location
-        hello_world_script = os.path.join(project_root, "template", "scripts", "hello_world.py")
+        # Hard-coded path to the hello_world.py script
+        hello_world_script = "template/scripts/hello_world.py"
         
         # Check if the script exists
         if not os.path.exists(hello_world_script):
-            logger.warning(f"Script not found at expected production location: {hello_world_script}")
-            
-            # Check possible fallback locations
-            possible_paths = [
-                os.path.join(script_dir, "hello_world.py"),                    # Same directory as this script
-                os.path.join(project_root, "scripts", "hello_world.py"),       # scripts directory in project root
-                os.path.join(project_root, "template", "hello_world.py"),      # template directory in project root
-                os.path.join(os.path.dirname(project_root), "template", "scripts", "hello_world.py")  # One level up
-            ]
-            
-            for path in possible_paths:
-                if os.path.exists(path):
-                    hello_world_script = path
-                    logger.info(f"Found script at alternate location: {hello_world_script}")
-                    break
-            else:
-                raise FileNotFoundError(f"Could not find hello_world.py script in any expected location")
+            raise FileNotFoundError(f"Could not find hello_world.py at {hello_world_script}")
         
         # Command to activate environment and run script
         cmd = f"source activate _project_env && python {hello_world_script} --name 'CML User' --repeat 3"
