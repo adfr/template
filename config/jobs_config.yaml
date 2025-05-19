@@ -42,7 +42,7 @@ jobs:
     parent_job_id: data_processing  # Runs after data processing
 
   scheduled_report:
-    name: Weekly Status Report
+    name: random job
     script: template/scripts/example_job.py
     kernel: python3
     runtime_id: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8

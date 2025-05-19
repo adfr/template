@@ -24,12 +24,6 @@ def create_environment():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade"] + packages)
         print(f"Successfully installed packages: {', '.join(packages)}")
         
-        # Optional: Create any required directories
-        dirs_to_create = ["data", "models", "reports"]
-        for directory in dirs_to_create:
-            os.makedirs(directory, exist_ok=True)
-            print(f"Created directory: {directory}")
-            
         return True
     except Exception as e:
         print(f"Error creating environment: {str(e)}")
