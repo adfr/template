@@ -28,7 +28,7 @@ def main():
             raise FileNotFoundError(f"Could not find hello_world.py at {hello_world_script}")
         
         # Command to activate environment and run script
-        cmd = f"source activate _project_env && python {hello_world_script} --name 'CML User' --repeat 3"
+        cmd = f"python {hello_world_script} "
         
         logger.info(f"Running command: {cmd}")
         
