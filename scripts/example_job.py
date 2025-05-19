@@ -29,19 +29,22 @@ def main():
             script_dir = os.path.abspath(os.getcwd())
             logger.info(f"Running in interactive mode. Using current directory: {script_dir}")
         
-        # Path to the hello_world.py script
-        hello_world_script = os.path.join(script_dir, "hello_world.py")
+        # Get the project root directory (parent of script_dir)
+        project_root = os.path.dirname(script_dir)
+        
+        # Path to the hello_world.py script in the expected production location
+        hello_world_script = os.path.join(project_root, "template", "scripts", "hello_world.py")
         
         # Check if the script exists
         if not os.path.exists(hello_world_script):
-            logger.warning(f"Script not found at {hello_world_script}")
+            logger.warning(f"Script not found at expected production location: {hello_world_script}")
             
-            # Check possible locations
+            # Check possible fallback locations
             possible_paths = [
-                os.path.join(script_dir, "scripts", "hello_world.py"),  # If in project root
-                os.path.join(script_dir, "..", "template", "hello_world.py"),  # If template directory is used in production
-                os.path.join(script_dir, "..", "scripts", "hello_world.py"),   # If in a subdirectory
-                os.path.join(os.path.dirname(script_dir), "template", "hello_world.py")  # Another possible template location
+                os.path.join(script_dir, "hello_world.py"),                    # Same directory as this script
+                os.path.join(project_root, "scripts", "hello_world.py"),       # scripts directory in project root
+                os.path.join(project_root, "template", "hello_world.py"),      # template directory in project root
+                os.path.join(os.path.dirname(project_root), "template", "scripts", "hello_world.py")  # One level up
             ]
             
             for path in possible_paths:
