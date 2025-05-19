@@ -28,19 +28,6 @@ jobs:
     arguments: --name "CML User" --repeat 3
     parent_job_id: create_env  # This makes the job dependent on create_env
 
-  model_training:
-    name: Train Machine Learning Model
-    script: template/scripts/model_training.py
-    kernel: python3
-    runtime_id: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8
-    cpu: 4
-    memory: 8
-    timeout: 7200  # 2 hours
-    environment:
-      MODEL_DIR: /models
-    arguments: --n_samples 5000 --n_features 30 --model_name demo_model
-    parent_job_id: data_processing  # Runs after data processing
-
   scheduled_report:
     name: random job
     script: template/scripts/example_job.py

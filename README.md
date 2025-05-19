@@ -16,8 +16,7 @@ cloudera-AI-template/
 │   └── jobs_config.yaml      # Job configurations
 ├── scripts/
 │   ├── hello_world.py        # Basic job example
-│   ├── example_job.py        # Environment activation example
-│   └── model_training.py     # ML training example
+│   └── example_job.py        # Environment activation example
 ├── src/                      # Additional source code
 ├── results/                  # Job outputs (created automatically)
 ├── create_environment.py     # Environment setup script
@@ -71,8 +70,7 @@ jobs:
 
 1. **create_env** - Sets up the Python environment with required packages
 2. **data_processing** - Example data processing job with argument parsing
-3. **model_training** - Complete ML workflow with model training and evaluation
-4. **scheduled_report** - Weekly scheduled job example
+3. **scheduled_report** - Weekly scheduled job example
 
 ## 🔧 Key Features
 
