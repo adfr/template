@@ -34,9 +34,13 @@ def create_environment():
 if __name__ == "__main__":
     success = create_environment()
     # Exit with appropriate code
+    # List all installed packages
+    print("Listing all installed packages:")
+    subprocess.run([sys.executable, "-m", "pip", "list"])
+    
     if success:
         print("Environment setup was successful.")
         sys.exit(0)
     else:
         print("Environment setup failed.")
-        sys.exit(1) 
+        sys.exit(1)
