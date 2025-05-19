@@ -22,7 +22,6 @@ def create_environment():
     try:
         # Install packages using pip
         subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade"] + packages)
-        print(f"Successfully installed packages: {', '.join(packages)}")
         
         return True
     except Exception as e:
