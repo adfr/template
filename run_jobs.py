@@ -7,8 +7,10 @@ import os
 import sys
 import yaml
 import cmlapi
-from dotenv import load_dotenv
+import subprocess
 
+# Install python-dotenv if not present
+!pip install python-dotenv
 # Load environment variables from .env file
 load_dotenv()
 
