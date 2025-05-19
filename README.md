@@ -1,102 +1,155 @@
-# CML Jobs Template
+# Cloudera AI Jobs Template
 
-This template provides a framework for setting up and managing jobs in Cloudera Machine Learning (CML).
+This template provides a comprehensive framework for setting up and managing jobs in Cloudera Machine Learning (CML), including ML workflows, data processing, and scheduled tasks.
 
-## Files Overview
+## 🚀 Quick Start
 
-- `config/jobs_config.yaml` - Contains all job configurations and their parameters
-- `run_jobs.py` - Main script that reads job configurations and creates them in CML
-- `create_environment.py` - First job that sets up the Python environment
-- `process_data.py` - Example data processing job
-- `.env` - Environment variables (not in version control)
-- `.env.example` - Example environment variables template
+1. Clone this repository into your CML project
+2. Copy `.env.example` to `.env` and fill in your values
+3. Run `python run_jobs.py` to create all jobs in CML
 
-## How It Works
-
-1. Define all your jobs in `config/jobs_config.yaml` with their parameters, dependencies, and resources
-2. Configure your environment variables in `.env` (copy from `.env.example`)
-3. The first job is always `create_env` which sets up the Python environment
-4. Run the `run_jobs.py` script to create all the jobs in CML
-
-## Usage
-
-Set environment variables in a `.env` file:
+## 📁 Project Structure
 
 ```
+cloudera-AI-template/
+├── config/
+│   └── jobs_config.yaml      # Job configurations
+├── scripts/
+│   ├── hello_world.py        # Basic job example
+│   ├── example_job.py        # Environment activation example
+│   └── model_training.py     # ML training example
+├── src/                      # Additional source code
+├── results/                  # Job outputs (created automatically)
+├── create_environment.py     # Environment setup script
+├── run_jobs.py              # Main job creation script
+├── requirements.txt         # Python dependencies
+├── .env.example             # Environment variables template
+└── README.md                # This file
+```
+
+## ⚙️ Configuration
+
+### Environment Variables (.env)
+
+```bash
+# CML API Configuration
 CML_API_HOST=https://ml-12345.cloud.example.com
 CML_API_KEY=your_api_key_here
 CML_PROJECT_ID=project_id_here
-CML_RUNTIME_ID=your_ml_runtime_id  # Required for ML Runtime projects
+
+# ML Runtime ID (required for ML Runtime projects)
+CML_RUNTIME_ID=python3.11
+
+# Default resource settings (optional)
+DEFAULT_CPU=1
+DEFAULT_MEMORY=2
+DEFAULT_TIMEOUT=3600
 ```
 
-Then run the script:
+### Job Configuration (jobs_config.yaml)
 
-```bash
-python run_jobs.py
-```
-
-Additional environment variables that can be set:
-- `DEFAULT_CPU` - Default CPU cores for jobs (if not specified in config)
-- `DEFAULT_MEMORY` - Default memory in GB for jobs (if not specified in config)
-- `DEFAULT_TIMEOUT` - Default timeout in seconds for jobs (if not specified in config)
-
-## Job Configuration
-
-Each job in `config/jobs_config.yaml` has the following structure:
+Each job has the following structure:
 
 ```yaml
 jobs:
   job_key:
     name: Human-readable job name
-    script: script_to_run.py
-    kernel: python3  # or r, scala, etc.
-    runtime_id: runtime_id_here  # Required for ML Runtime projects 
-    cpu: 1  # Number of CPU cores
-    memory: 2  # Memory in GB
-    timeout: 3600  # Timeout in seconds
+    script: path/to/script.py
+    kernel: python3
+    runtime_id: 91
+    cpu: 4
+    memory: 8
+    timeout: 3600
     environment:
-      ENV_VAR: value  # Environment variables
-    arguments: --param value  # Command-line arguments
-    
-    # Either schedule (for cron) or parent_job_id (for dependent jobs)
-    schedule: 0 8 * * 1  # Run every Monday at 8 AM
-    # OR
-    parent_job_id: previous_job_key  # Run after this job completes
-    
-    # Optional
-    nvidia_gpu: 1  # Number of GPUs
-    attachments:
-      - path/to/file.txt  # Files to attach to emails
+      ENV_VAR: value
+    arguments: --param value
+    parent_job_id: previous_job  # For dependent jobs
+    schedule: "0 8 * * 1"       # For scheduled jobs (cron format)
 ```
 
-## ML Runtimes vs. Engine Runtimes
+## 📋 Included Jobs
+
+1. **create_env** - Sets up the Python environment with required packages
+2. **data_processing** - Example data processing job with argument parsing
+3. **model_training** - Complete ML workflow with model training and evaluation
+4. **scheduled_report** - Weekly scheduled job example
+
+## 🔧 Key Features
+
+- **Automatic path detection** - Works both locally and when cloned in CML
+- **Dependency management** - Jobs can depend on other jobs
+- **Flexible scheduling** - Support for cron-style scheduling
+- **Resource configuration** - CPU, memory, and GPU allocation
+- **Environment variables** - Pass configuration to jobs
+- **Comprehensive examples** - ML training, data processing, and more
+
+## 📝 Adding New Jobs
+
+1. Create your script in the `scripts/` directory:
+
+```python
+#!/usr/bin/env python3
+"""Your job description"""
+
+import argparse
+import logging
+
+def main():
+    # Your job logic here
+    pass
+
+if __name__ == "__main__":
+    main()
+```
+
+2. Add the job configuration to `config/jobs_config.yaml`:
+
+```yaml
+jobs:
+  my_new_job:
+    name: My New Job
+    script: scripts/my_new_job.py
+    kernel: python3
+    runtime_id: 91
+    cpu: 2
+    memory: 4
+    parent_job_id: data_processing
+```
+
+3. Run `python run_jobs.py` to create the job in CML
+
+## 🏃 ML Runtimes vs. Engine Runtimes
 
 CML supports two types of runtimes:
 
-1. **ML Runtimes** (newer) - Require a `runtime_id` parameter in job configurations
-2. **Engine Runtimes** (legacy) - Do not require a `runtime_id` parameter
+1. **ML Runtimes** (newer) - Require a `runtime_id` parameter
+2. **Engine Runtimes** (legacy) - Don't require a `runtime_id`
 
-For ML Runtime projects, you must specify the `runtime_id` either in:
-1. Each job configuration in `config/jobs_config.yaml`, or
-2. The `.env` file as `CML_RUNTIME_ID` (used as a default for all jobs)
+For ML Runtime projects, specify the `runtime_id` either:
+- In each job configuration, or
+- As `CML_RUNTIME_ID` in the `.env` file (default for all jobs)
 
-The runtime ID can be:
-- A short name (e.g., `python3.11`)
-- A full image URL (e.g., `docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8`)
+## 🔍 Debugging
 
-## Adding New Jobs
+1. Check job logs in the CML UI
+2. Use `--log_level DEBUG` in job arguments for verbose logging
+3. Verify environment variables are set correctly
+4. Ensure all file paths are correct
 
-1. Define the job in `config/jobs_config.yaml`
-2. Create the script file referenced in the job configuration
-3. Re-run `run_jobs.py` to create the new job
+## 🤝 Contributing
 
-## Example Workflow
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-The template includes an example workflow:
+## 📜 License
 
-1. `create_env` - Sets up the Python environment
-2. `data_processing` - Processes data (depends on create_env)
-3. `model_training` - Trains a model (depends on data_processing)
-4. `scheduled_report` - Generates a weekly report (scheduled job)
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-You can modify or extend this workflow based on your specific needs. 
+## 🆘 Support
+
+For issues or questions:
+- Check the CML documentation
+- Open an issue in this repository
+- Contact your CML administrator

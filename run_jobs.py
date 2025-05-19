@@ -19,8 +19,29 @@ def load_config():
     Returns:
         dict: The job configuration dictionary
     """
-    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-                              "config", "jobs_config.yaml")
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Try different possible paths for the config file
+    possible_paths = [
+        # Direct path (when run from root of project)
+        os.path.join(script_dir, "config", "jobs_config.yaml"),
+        # When run from inside a cloned directory
+        os.path.join(script_dir, "template", "config", "jobs_config.yaml"),
+        # When the script is in a subdirectory
+        os.path.join(os.path.dirname(script_dir), "config", "jobs_config.yaml"),
+    ]
+    
+    config_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            config_path = path
+            break
+    
+    if not config_path:
+        raise FileNotFoundError(f"Could not find jobs_config.yaml in any of these locations: {possible_paths}")
+    
+    print(f"Loading config from: {config_path}")
     
     with open(config_path, 'r') as config_file:
         config = yaml.safe_load(config_file)
@@ -82,9 +103,9 @@ def setup_jobs():
         
         # Set runtime ID - required for ML Runtime projects
         if "runtime_id" in job_config:
-            job_body.runtime_id = job_config["runtime_id"]
+            job_body.runtime_identifier = job_config["runtime_id"]
         elif default_runtime_id:
-            job_body.runtime_id = default_runtime_id
+            job_body.runtime_identifier = default_runtime_id
         else:
             print(f"Warning: No runtime_id specified for job '{job_config['name']}'.")
             print("ML Runtime projects require a runtime_id. Set it in config or with CML_RUNTIME_ID env var.")
@@ -123,6 +144,7 @@ def setup_jobs():
         
         # Create the job
         try:
+            print(job_body.runtime_identifier)
             job_response = client.create_job(job_body, project_id=project_id)
             job_id = job_response.id
             job_id_map[job_key] = job_id

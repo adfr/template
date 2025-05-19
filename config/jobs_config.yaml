@@ -5,7 +5,7 @@
 jobs:
   create_env:
     name: Create Python Environment
-    script: template/create_environment.py
+    script: create_environment.py
     kernel: python3
     runtime_id: 91
     cpu: 1
@@ -16,7 +16,7 @@ jobs:
 
   data_processing:
     name: Process Data
-    script: template/scripts/hello_world.py
+    script: scripts/hello_world.py
     kernel: python3
     runtime_id: 91
     cpu: 2
@@ -25,5 +25,28 @@ jobs:
     environment:
       DATA_PATH: /data/raw
       OUTPUT_PATH: /data/processed
-    arguments: --debug
+    arguments: --name "CML User" --repeat 3
     parent_job_id: create_env  # This makes the job dependent on create_env
+
+  model_training:
+    name: Train Machine Learning Model
+    script: scripts/model_training.py
+    kernel: python3
+    runtime_id: 91
+    cpu: 4
+    memory: 8
+    timeout: 7200  # 2 hours
+    environment:
+      MODEL_DIR: /models
+    arguments: --n_samples 5000 --n_features 30 --model_name demo_model
+    parent_job_id: data_processing  # Runs after data processing
+
+  scheduled_report:
+    name: Weekly Status Report
+    script: scripts/example_job.py
+    kernel: python3
+    runtime_id: 91
+    cpu: 1
+    memory: 2
+    timeout: 600  # 10 minutes
+    schedule: "0 9 * * 1"  # Every Monday at 9 AM
