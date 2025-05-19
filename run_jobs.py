@@ -106,9 +106,9 @@ def setup_jobs():
         
         # Set runtime ID - required for ML Runtime projects
         if "runtime_id" in job_config:
-            job_body.runtime_identifier = job_config["runtime_id"]
+            job_body.runtime_identifier = str(job_config["runtime_id"])
         elif default_runtime_id:
-            job_body.runtime_identifier = default_runtime_id
+            job_body.runtime_identifier = str(default_runtime_id)
         else:
             print(f"Warning: No runtime_id specified for job '{job_config['name']}'.")
             print("ML Runtime projects require a runtime_id. Set it in config or with CML_RUNTIME_ID env var.")
