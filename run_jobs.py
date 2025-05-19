@@ -12,6 +12,7 @@ import subprocess
 # Install python-dotenv if not present
 !pip install python-dotenv
 # Load environment variables from .env file
+from dotenv import load_dotenv
 load_dotenv()
 
 def load_config():
