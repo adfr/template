@@ -147,7 +147,19 @@ def setup_jobs():
         
         # Create the job
         try:
-            print(job_body.runtime_identifier)
+            print(f"Job details for '{job_config['name']}':")
+            print(f"  Script: {job_body.script}")
+            print(f"  Kernel: {job_body.kernel}")
+            print(f"  Runtime ID: {job_body.runtime_identifier}")
+            print(f"  CPU: {job_body.cpu}")
+            print(f"  Memory: {job_body.memory}")
+            print(f"  GPU: {job_body.nvidia_gpu if hasattr(job_body, 'nvidia_gpu') else 'None'}")
+            print(f"  Timeout: {job_body.timeout}")
+            print(f"  Arguments: {job_body.arguments if hasattr(job_body, 'arguments') else 'None'}")
+            print(f"  Environment: {job_body.environment if hasattr(job_body, 'environment') else 'None'}")
+            print(f"  Attachments: {job_body.attachments if hasattr(job_body, 'attachments') else 'None'}")
+            print(f"  Schedule: {job_body.schedule if hasattr(job_body, 'schedule') else 'None'}")
+            print(f"  Parent Job ID: {job_body.parent_job_id if hasattr(job_body, 'parent_job_id') else 'None'}")
             job_response = client.create_job(job_body, project_id=project_id)
             job_id = job_response.id
             job_id_map[job_key] = job_id
