@@ -35,13 +35,22 @@ def main():
         # Check if the script exists
         if not os.path.exists(hello_world_script):
             logger.warning(f"Script not found at {hello_world_script}")
-            # Look in the scripts directory if we're in project root
-            alternate_path = os.path.join(script_dir, "scripts", "hello_world.py")
-            if os.path.exists(alternate_path):
-                hello_world_script = alternate_path
-                logger.info(f"Found script at alternate location: {hello_world_script}")
+            
+            # Check possible locations
+            possible_paths = [
+                os.path.join(script_dir, "scripts", "hello_world.py"),  # If in project root
+                os.path.join(script_dir, "..", "template", "hello_world.py"),  # If template directory is used in production
+                os.path.join(script_dir, "..", "scripts", "hello_world.py"),   # If in a subdirectory
+                os.path.join(os.path.dirname(script_dir), "template", "hello_world.py")  # Another possible template location
+            ]
+            
+            for path in possible_paths:
+                if os.path.exists(path):
+                    hello_world_script = path
+                    logger.info(f"Found script at alternate location: {hello_world_script}")
+                    break
             else:
-                raise FileNotFoundError(f"Could not find hello_world.py script")
+                raise FileNotFoundError(f"Could not find hello_world.py script in any expected location")
         
         # Command to activate environment and run script
         cmd = f"source activate _project_env && python {hello_world_script} --name 'CML User' --repeat 3"
