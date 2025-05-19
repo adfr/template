@@ -13,7 +13,7 @@ import subprocess
 !pip install python-dotenv
 # Load environment variables from .env file
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dotenv_path="template/.env")
 
 def load_config():
     """
@@ -23,7 +23,7 @@ def load_config():
         dict: The job configuration dictionary
     """
     # Get the directory where this script is located
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_dir = script_dir = os.getcwd()
     
     # Try different possible paths for the config file
     possible_paths = [
