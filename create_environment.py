@@ -81,6 +81,14 @@ def create_environment():
         print(f"Unexpected error: {e}")
         return False
 
+def is_interactive():
+    """Check if we're running in an interactive environment like IPython/Jupyter"""
+    try:
+        # This will raise exception if not in IPython
+        return bool(get_ipython())
+    except NameError:
+        return False
+
 if __name__ == "__main__":
     success = create_environment()
     
@@ -96,7 +104,13 @@ if __name__ == "__main__":
             print(f"Error listing packages: {e}")
         
         print("\nEnvironment setup was successful.")
-        sys.exit(0)
+        
+        # Only exit if not in an interactive environment
+        if not is_interactive():
+            sys.exit(0)
     else:
         print("\nEnvironment setup failed.")
-        sys.exit(1)
+        
+        # Only exit if not in an interactive environment
+        if not is_interactive():
+            sys.exit(1)
