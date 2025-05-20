@@ -60,16 +60,16 @@ def create_environment():
     # Install packages from requirements.txt
     try:
         print("Installing packages from requirements.txt...")
-        # Get the paths for the virtual environment
-        pip_path = os.path.join(env_path, "bin", "pip")
-        python_path = os.path.join(env_path, "bin", "python")
         
-        # Use the venv's pip to install packages
-        if os.path.exists(pip_path):
-            subprocess.check_call([python_path, "-m", "pip", "install", "-r", requirements_file])
-        else:
-            # Alternative approach using source to activate the environment
-            activate_cmd = f"source {os.path.join(env_path, 'bin', 'activate')} && uv pip install -r {requirements_file}"
+        # Install directly with uv into the virtual environment
+        try:
+            # Use uv directly to install packages into the virtual environment
+            print("Using uv to install packages directly...")
+            subprocess.check_call(["uv", "pip", "install", "--python", os.path.join(env_path, "bin", "python"), "-r", requirements_file])
+        except subprocess.CalledProcessError:
+            print("Failed to use uv directly. Trying alternative approach...")
+            # Try alternative approach with source activation
+            activate_cmd = f"source {os.path.join(env_path, 'bin', 'activate')} && pip install -r {requirements_file}"
             subprocess.check_call(activate_cmd, shell=True, executable="/bin/bash")
             
         print("Packages installed successfully.")
@@ -87,8 +87,14 @@ if __name__ == "__main__":
     # List all installed packages
     if success:
         print("\nListing all installed packages in project_env:")
-        env_python = os.path.join(os.getcwd(), "project_env", "bin", "python")
-        subprocess.run([env_python, "-m", "pip", "list"])
+        try:
+            # Try to list packages
+            env_python = os.path.join(os.getcwd(), "project_env", "bin", "python")
+            activate_cmd = f"source {os.path.join(os.getcwd(), 'project_env', 'bin', 'activate')} && pip list"
+            subprocess.run(activate_cmd, shell=True, executable="/bin/bash")
+        except Exception as e:
+            print(f"Error listing packages: {e}")
+        
         print("\nEnvironment setup was successful.")
         sys.exit(0)
     else:
