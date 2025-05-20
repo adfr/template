@@ -82,7 +82,7 @@ if __name__ == "__main__":
     # List all installed packages
     if success:
         print("\nListing all installed packages in project_env:")
-        env_python = os.path.join(os.path.dirname(os.path.abspath(__file__)), "project_env", 
+        env_python = os.path.join(os.getcwd(), "project_env", 
                                 "bin" if sys.platform != "win32" else "Scripts", "python")
         subprocess.run([env_python, "-m", "pip", "list"])
         print("\nEnvironment setup was successful.")
