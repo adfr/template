@@ -40,7 +40,8 @@ def main():
             "bin",
             "python"
         )
-        
+        # Log the Python executable path that will be used
+        logger.info(f"Using Python executable: {env_python}")
         # Check if the environment exists
         if not os.path.exists(env_python):
             logger.warning(f"Virtual environment not found at {env_python}")
