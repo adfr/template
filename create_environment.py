@@ -28,7 +28,7 @@ def create_environment():
             return False
     
     # Get current directory
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
     
     # Path to requirements.txt file
     requirements_file = os.path.join(current_dir, "requirements.txt")
