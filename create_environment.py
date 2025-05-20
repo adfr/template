@@ -60,13 +60,18 @@ def create_environment():
     # Install packages from requirements.txt
     try:
         print("Installing packages from requirements.txt...")
-        # Get the pip path from the virtual environment
-        if sys.platform == "win32":
-            uv_cmd = ["uv", "pip", "install", "-r", requirements_file, "--venv", env_name]
-        else:
-            uv_cmd = ["uv", "pip", "install", "-r", requirements_file, "--venv", env_name]
+        # Get the paths for the virtual environment
+        pip_path = os.path.join(env_path, "bin", "pip")
+        python_path = os.path.join(env_path, "bin", "python")
         
-        subprocess.check_call(uv_cmd)
+        # Use the venv's pip to install packages
+        if os.path.exists(pip_path):
+            subprocess.check_call([python_path, "-m", "pip", "install", "-r", requirements_file])
+        else:
+            # Alternative approach using source to activate the environment
+            activate_cmd = f"source {os.path.join(env_path, 'bin', 'activate')} && uv pip install -r {requirements_file}"
+            subprocess.check_call(activate_cmd, shell=True, executable="/bin/bash")
+            
         print("Packages installed successfully.")
         return True
     except subprocess.CalledProcessError as e:
@@ -82,8 +87,7 @@ if __name__ == "__main__":
     # List all installed packages
     if success:
         print("\nListing all installed packages in project_env:")
-        env_python = os.path.join(os.getcwd(), "project_env", 
-                                "bin" if sys.platform != "win32" else "Scripts", "python")
+        env_python = os.path.join(os.getcwd(), "project_env", "bin", "python")
         subprocess.run([env_python, "-m", "pip", "list"])
         print("\nEnvironment setup was successful.")
         sys.exit(0)
