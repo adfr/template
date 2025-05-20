@@ -32,11 +32,12 @@ def main():
             raise FileNotFoundError(f"Could not find hello_world.py at {hello_world_script}")
         
         # Get path to the project_env Python executable
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        # Use current working directory instead of __file__ which doesn't work in IPython
+        project_root = os.getcwd()
         env_python = os.path.join(
             project_root, 
             "project_env",
-            "bin" if sys.platform != "win32" else "Scripts",
+            "bin",
             "python"
         )
         
