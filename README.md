@@ -69,8 +69,7 @@ jobs:
 ## 📋 Included Jobs
 
 1. **create_env** - Sets up the Python environment with required packages
-2. **data_processing** - Example data processing job with argument parsing
-3. **scheduled_report** - Weekly scheduled job example
+2. **scheduled_report** - Weekly scheduled job example
 
 ## 🔧 Key Features
 

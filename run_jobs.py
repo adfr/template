@@ -14,7 +14,7 @@ import subprocess
 # Load environment variables from .env file
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="template/.env")
-
+project_id = os.environ["CDSW_PROJECT_ID"]
 def load_config():
     """
     Load the job configuration from the YAML file
@@ -89,9 +89,64 @@ def setup_jobs():
     job_id_map = {}
     
     # Process jobs in order (create_env first, then others)
-    job_order = ["create_env"] + [job for job in JOBS_CONFIG if job != "create_env"]
+    # Process create_env job first if it exists
+    if "create_env" in JOBS_CONFIG:
+        job_key = "create_env"
+        job_config = JOBS_CONFIG[job_key]
+        
+        # Create and run the environment setup job
+        print(f"Creating and running environment setup job: {job_config['name']}")
+        
+        # Create job request
+        job_body = cmlapi.CreateJobRequest()
+        
+        # Set basic job parameters
+        job_body.name = job_config["name"]
+        job_body.script = job_config["script"]
+        job_body.kernel = job_config.get("kernel", "python3")
+        
+        # Set runtime ID
+        if "runtime_id" in job_config:
+            job_body.runtime_identifier = str(job_config["runtime_id"])
+        elif default_runtime_id:
+            job_body.runtime_identifier = str(default_runtime_id)
+        
+        # Set resource requirements
+        job_body.cpu = str(job_config.get("cpu", os.environ.get("DEFAULT_CPU", "1")))
+        job_body.memory = str(job_config.get("memory", os.environ.get("DEFAULT_MEMORY", "2")))
+        if "nvidia_gpu" in job_config:
+            job_body.nvidia_gpu = job_config["nvidia_gpu"]
+        
+        # Set timeout
+        job_body.timeout = str(job_config.get("timeout", os.environ.get("DEFAULT_TIMEOUT", "3600")))
+        
+        # Set arguments if provided
+        if "arguments" in job_config:
+            job_body.arguments = job_config["arguments"]
+        
+        # Set environment variables if provided
+        if "environment" in job_config:
+            job_body.environment = job_config["environment"]
+        
+        try:
+            # Create the job
+            job_response = client.create_job(job_body, project_id=project_id)
+            job_id = job_response.id
+            job_id_map[job_key] = job_id
+            print(f"Successfully created environment job with ID: {job_id}")
+            
+            # Run the job immediately
+            print(f"Running environment setup job...")
+            run_response = client.start_job(job_id, project_id=project_id)
+            print(f"Environment setup job started with run ID: {run_response.id}")
+        except Exception as e:
+            print(f"Error creating/running environment job: {str(e)}")
     
-    for job_key in job_order:
+    # Process all other jobs
+    for job_key in JOBS_CONFIG:
+        if job_key == "create_env":
+            continue  # Skip as we've already processed it
+            
         job_config = JOBS_CONFIG[job_key]
         
         print(f"Creating job: {job_config['name']}")

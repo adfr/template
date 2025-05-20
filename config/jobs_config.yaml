@@ -14,20 +14,6 @@ jobs:
     environment: {}
     arguments: ""
 
-  data_processing:
-    name: Process Data
-    script: template/scripts/hello_world.py
-    kernel: python3
-    runtime_id: "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8"
-    cpu: 2
-    memory: 4
-    timeout: 3600  # 1 hour
-    environment:
-      DATA_PATH: /data/raw
-      OUTPUT_PATH: /data/processed
-    arguments: --name "CML User" --repeat 3
-    parent_job_id: create_env  # This makes the job dependent on create_env
-
   scheduled_report:
     name: random job
     script: template/scripts/example_job.py

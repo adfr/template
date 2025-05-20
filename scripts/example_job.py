@@ -27,8 +27,23 @@ def main():
         if not os.path.exists(hello_world_script):
             raise FileNotFoundError(f"Could not find hello_world.py at {hello_world_script}")
         
-        # Command to activate environment and run script
-        cmd = f"python {hello_world_script} "
+        # Get path to the project_env Python executable
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        env_python = os.path.join(
+            project_root, 
+            "project_env",
+            "bin" if sys.platform != "win32" else "Scripts",
+            "python"
+        )
+        
+        # Check if the environment exists
+        if not os.path.exists(env_python):
+            logger.warning(f"Virtual environment not found at {env_python}")
+            logger.info("Falling back to system Python")
+            env_python = sys.executable
+        
+        # Command to run script with project_env Python
+        cmd = f"{env_python} {hello_world_script} --name 'CML User' --repeat 3"
         
         logger.info(f"Running command: {cmd}")
         
