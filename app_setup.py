@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 # Configuration
-APP_FILE = "app.py"  # Main application file to run
+APP_FILE = "template/app.py"  # Main application file to run
 DEFAULT_PORT = 5000  # Default port for web applications
 USE_UV = True  # Set to False to use pip instead
 
