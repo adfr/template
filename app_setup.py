@@ -11,9 +11,10 @@ import os
 from pathlib import Path
 
 # Configuration
-APP_FILE = "template/app.py"  # Main application file to run
+APP_FILE = "template/scripts/app.py"  # Main application file to run
+REQ_FILE = "template/requirements.txt" 
 DEFAULT_PORT = 5000  # Default port for web applications
-USE_UV = True  # Set to False to use pip instead
+USE_UV = False  # Set to False to use pip instead
 
 def run_command(command, description):
     """Run a command and print status"""
@@ -49,11 +50,11 @@ def setup_environment_uv():
         print("✅ Virtual environment already exists")
 
     # Install requirements
-    if not Path("requirements.txt").exists():
+    if not Path(REQ_FILE).exists():
         print("❌ requirements.txt not found!")
         return False
-
-    return run_command("uv pip install -r requirements.txt", "Installing requirements with UV")
+    command = f"uv pip install -r {REQ_FILE}"
+    return run_command(command, "Installing requirements with UV")
 
 def setup_environment_pip():
     """Create virtual environment and install requirements using pip"""
@@ -63,20 +64,18 @@ def setup_environment_pip():
             return False
     else:
         print("✅ Virtual environment already exists")
-
+    
     # Install requirements
-    if not Path("requirements.txt").exists():
+    if not Path(REQ_FILE).exists():
         print("❌ requirements.txt not found!")
         return False
-
-    # Activate environment and install requirements
+    
+    # Install requirements with platform-specific commands
     if sys.platform == "win32":
-        activate_cmd = ".venv\\Scripts\\activate"
-        pip_cmd = f"{activate_cmd} && pip install -r requirements.txt"
+        pip_cmd = f'.venv\\Scripts\\activate && pip install --no-user -r {REQ_FILE}'
     else:
-        activate_cmd = "source .venv/bin/activate"
-        pip_cmd = f"{activate_cmd} && pip install -r requirements.txt"
-
+        pip_cmd = f'bash -c "source .venv/bin/activate && pip install --no-user -r {REQ_FILE}"'
+    
     return run_command(pip_cmd, "Installing requirements with pip")
 
 def get_python_executable():
@@ -105,7 +104,7 @@ def main():
     """Main setup and launch process"""
     print("🚀 Generic App Setup and Launcher")
     print("=" * 40)
-
+    USE_UV = False 
     # Check if we're in the right directory
     if not Path(APP_FILE).exists():
         print(f"❌ {APP_FILE} not found! Run this from the application directory.")
