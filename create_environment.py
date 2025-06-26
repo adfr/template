@@ -14,9 +14,6 @@ def create_environment():
     # Environment name
     env_name = "project_env"
     
-    # Get template directory name from environment variable or use default
-    template_dir = os.environ.get("TEMPLATE_DIR", "template")
-    print(f"Using template directory: {template_dir}")
     
     # Check if uv is installed, install if not
     try:
@@ -35,7 +32,7 @@ def create_environment():
     current_dir = os.getcwd()
     
     # Path to requirements.txt file
-    requirements_file = os.path.join(current_dir, template_dir, "requirements.txt")
+    requirements_file = os.path.join(current_dir, "requirements.txt")
     
     # Check if requirements.txt exists
     if not os.path.exists(requirements_file):

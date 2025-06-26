@@ -40,7 +40,6 @@ HTML_TEMPLATE = """
                 <li><strong>Port:</strong> <span class="port">{{ port }}</span></li>
                 <li><strong>Host:</strong> {{ host }}</li>
                 <li><strong>Environment:</strong> {{ env_info }}</li>
-                <li><strong>Template Directory:</strong> {{ template_dir }}</li>
             </ul>
         </div>
         
@@ -49,7 +48,6 @@ HTML_TEMPLATE = """
             <ul>
                 <li>Flask web application setup</li>
                 <li>Environment variable configuration (CDSW_READONLY_PORT)</li>
-                <li>Template directory usage</li>
                 <li>Basic routing and templating</li>
                 <li>Integration with app_setup.py launcher</li>
             </ul>
@@ -73,13 +71,12 @@ def home():
     """Main page of the dummy app"""
     port = os.getenv('CDSW_READONLY_PORT', '8090')
     host = '127.0.0.1'
-    template_dir = os.environ.get("TEMPLATE_DIR", "template")
     
     return render_template_string(HTML_TEMPLATE, 
                                 port=port, 
                                 host=host,
                                 env_info="Development" if app.debug else "Production",
-                                template_dir=template_dir)
+)
 
 @app.route('/health')
 def health():
@@ -87,7 +84,6 @@ def health():
     return {
         "status": "healthy",
         "port": os.getenv('CDSW_READONLY_PORT', '8090'),
-        "template_dir": os.environ.get("TEMPLATE_DIR", "template")
     }
 
 @app.route('/api/test')
@@ -111,7 +107,6 @@ if __name__ == '__main__':
     PORT = os.getenv('CDSW_READONLY_PORT', '8090')
     
     print(f"🚀 Starting Dummy Flask App on http://127.0.0.1:{PORT}")
-    print(f"📁 Template directory: {os.environ.get('TEMPLATE_DIR', 'template')}")
     print("🛑 Press Ctrl+C to stop")
     
     # Run the app (following the pattern from app_setup.py comments)

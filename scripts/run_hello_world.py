@@ -20,12 +20,8 @@ def main():
     Main function to activate environment and run hello_world.py
     """
     try:
-        # Get template directory name from environment variable or use default
-        template_dir = os.environ.get("TEMPLATE_DIR", "template")
-        logger.info(f"Using template directory: {template_dir}")
-        
-        # Hard-coded path to the hello_world.py script
-        hello_world_script = os.path.join(template_dir, "scripts", "hello_world.py")
+        # Path to the hello_world.py script
+        hello_world_script = os.path.join("scripts", "hello_world.py")
         
         # Check if the script exists
         if not os.path.exists(hello_world_script):
