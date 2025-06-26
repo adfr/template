@@ -25,7 +25,7 @@ if os.path.exists(env_path):
 else:
     load_dotenv()  # Fall back to default .env in current directory
 
-project_id = os.environ["CDSW_PROJECT_ID"]
+# This line is not needed here as we'll get project_id in setup_jobs function
 
 def load_config():
     """
@@ -92,20 +92,20 @@ def setup_jobs():
         dict: Mapping of job names to their created job IDs
     """
     # Get parameters from environment variables
-    api_host = os.environ.get("CML_API_HOST")
+    # Use CML_API_HOST if set, otherwise fall back to CDSW_DOMAIN
+    api_host = os.environ.get("CML_API_HOST") or os.environ.get("CDSW_DOMAIN")
     api_key = os.environ.get("CML_API_KEY")
-    project_id = os.environ.get("CML_PROJECT_ID")
+    # Use CML_PROJECT_ID if set, otherwise fall back to CDSW_PROJECT_ID
+    project_id = os.environ.get("CML_PROJECT_ID") or os.environ.get("CDSW_PROJECT_ID")
     default_runtime_id = os.environ.get("CML_RUNTIME_ID")
     
-    # Check if required parameters are available
-    if not all([api_host, api_key, project_id]):
+    # Check if required parameters are available (excluding api_key)
+    if not all([api_host, project_id]):
         missing = []
         if not api_host:
-            missing.append("CML_API_HOST")
-        if not api_key:
-            missing.append("CML_API_KEY")
+            missing.append("CML_API_HOST or CDSW_DOMAIN")
         if not project_id:
-            missing.append("CML_PROJECT_ID")
+            missing.append("CML_PROJECT_ID or CDSW_PROJECT_ID")
             
         raise ValueError(f"Missing required environment variables: {', '.join(missing)}")
     

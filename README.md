@@ -17,8 +17,8 @@ cloudera-AI-template/
 ├── config/
 │   └── jobs_config.yaml      # Job configurations
 ├── scripts/
-│   ├── hello_world.py        # Basic job example
-│   ├── example_job.py        # Environment activation example  
+│   ├── hello_world.py        # Basic hello world script
+│   ├── run_hello_world.py    # Hello world runner with environment activation  
 │   └── app.py               # Demo Flask application
 ├── template/
 │   ├── scripts/
@@ -91,7 +91,7 @@ jobs:
     name: Human-readable job name
     script: template/path/to/script.py  # Automatically adjusted based on TEMPLATE_DIR
     kernel: python3
-    runtime_id: 91
+    runtime_id: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8
     cpu: 4
     memory: 8
     timeout: 3600
@@ -105,7 +105,7 @@ jobs:
 ## 📋 Included Jobs
 
 1. **create_env** - Sets up the Python environment with required packages using UV
-2. **scheduled_report** - Weekly scheduled job example
+2. **scheduled_report** - Random job that runs hello world script weekly (Every Monday at 9 AM)
 
 ## 🎯 Application Examples
 
@@ -170,7 +170,7 @@ jobs:
     name: My New Job
     script: template/scripts/my_new_job.py  # Will be adjusted automatically
     kernel: python3
-    runtime_id: 91
+    runtime_id: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8
     cpu: 2
     memory: 4
     parent_job_id: create_env

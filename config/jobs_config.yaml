@@ -16,7 +16,7 @@ jobs:
 
   scheduled_report:
     name: random job
-    script: template/scripts/example_job.py
+    script: template/scripts/run_hello_world.py
     kernel: python3
     runtime_id: docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-jupyterlab-python3.11-standard:2025.01.3-b8
     cpu: 1
