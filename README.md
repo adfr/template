@@ -8,7 +8,8 @@ This template provides a comprehensive framework for setting up and managing job
 2. Set the `TEMPLATE_DIR` environment variable if your project structure differs
 3. Copy `.env.example` to `.env` and fill in your values (if using the job runner)
 4. Run `python app_setup.py` to launch the demo Flask application
-5. Or run `python run_jobs.py` to create all jobs in CML
+5. **Test jobs locally**: Run `python test_run_jobs.py` to test all jobs before CML deployment
+6. Or run `python run_jobs.py` to create all jobs in CML
 
 ## 📁 Project Structure
 
@@ -201,6 +202,43 @@ Configure in `app_setup.py`:
 USE_UV = True  # Set to False to use pip instead
 ```
 
+## 🧪 Testing
+
+### Local Job Testing
+
+Test your jobs locally before deploying to CML using the included test runner:
+
+```bash
+# Run all jobs locally
+python test_run_jobs.py
+```
+
+The test runner:
+- Loads job configuration from `config/jobs_config.yaml`
+- Executes jobs locally using their configured scripts and parameters
+- Runs jobs in dependency order (create_env first)
+- Provides detailed output and timing information
+- Returns appropriate exit codes for CI/CD integration
+
+### Test Features
+
+- **Local Execution**: Runs scripts directly without CML integration
+- **Environment Simulation**: Uses configured environment variables
+- **Dependency Handling**: Respects job dependencies and execution order
+- **Error Reporting**: Detailed stdout/stderr capture and reporting
+- **Timeout Support**: Respects job timeout configurations
+- **Summary Reports**: Shows success/failure statistics and timing
+
+### Usage Examples
+
+```bash
+# Test all jobs
+python test_run_jobs.py
+
+# Check exit code in scripts
+python test_run_jobs.py && echo "All tests passed" || echo "Some tests failed"
+```
+
 ## 🔍 Debugging
 
 1. Check job logs in the CML UI
@@ -212,6 +250,7 @@ USE_UV = True  # Set to False to use pip instead
    ```
 4. Ensure all file paths are correct
 5. Test the demo app with `python app_setup.py`
+6. **Run local tests first**: Use `python test_run_jobs.py` to test jobs locally before CML deployment
 
 ## 🤝 Contributing
 
